@@ -1,10 +1,12 @@
 package com.book.cats
 import JsonWriterInstances._
+import JsonSyntax._
 final case class Person(name: String, email: String)
 
 object TypeClassMain {
   def main(args: Array[String]): Unit = {
     println(Json.toJson(Person(name = "name", email = "email")))
+    println(Person(name = "name", email = "email").toJson)
   }
 }
 
@@ -31,6 +33,15 @@ object JsonWriterInstances {
 }
 
 // interfaces
+
+// interface object
 object Json {
-  def toJson[A](value: A)(implicit writer: JsonWriter[A]): Json = writer.write(value)
+  def toJson[A: JsonWriter](value: A): Json = implicitly[JsonWriter[A]].write(value)
+}
+
+//interface syntax
+object JsonSyntax {
+  implicit class JsonWriteOps[A](value: A) {
+    def toJson(implicit w: JsonWriter[A]): Json = w.write(value)
+  }
 }
