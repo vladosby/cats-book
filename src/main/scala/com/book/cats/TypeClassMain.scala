@@ -63,3 +63,33 @@ object RecursiveResolution {
     }
   }
 }
+
+
+// exercise
+trait Printable[A] {
+  def format(v: A): String
+}
+
+object PrintableInstances {
+  implicit val stringPrintable: Printable[String] = (v: String) => s"printable string: $v"
+  implicit val intPrintable: Printable[Int] = (v: Int) => s"printable int: $v"
+}
+
+object Printable {
+  def format[A : Printable](v: A): String = {
+    implicitly[Printable[A]].format(v)
+  }
+
+  def print[A : Printable](v: A): Unit = {
+    println(implicitly[Printable[A]].format(v))
+  }
+}
+
+object PrintableMain {
+  def main(args: Array[String]): Unit = {
+    import PrintableInstances._
+
+    Printable.print("Hello")
+    Printable.print(123)
+  }
+}
