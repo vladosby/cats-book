@@ -1,12 +1,18 @@
 package com.book.cats
 import JsonWriterInstances._
 import JsonSyntax._
+import RecursiveResolution._
+
 final case class Person(name: String, email: String)
+
+final case class Person2(name: Option[String], email: Option[String])
 
 object TypeClassMain {
   def main(args: Array[String]): Unit = {
     println(Json.toJson(Person(name = "name", email = "email")))
     println(Person(name = "name", email = "email").toJson)
+    println(Option(Person(name = "name", email = "email")).toJson)
+    println(Option.empty[String].toJson)
   }
 }
 
@@ -43,5 +49,17 @@ object Json {
 object JsonSyntax {
   implicit class JsonWriteOps[A](value: A) {
     def toJson(implicit w: JsonWriter[A]): Json = w.write(value)
+  }
+}
+
+//recursive implicit resolution
+object RecursiveResolution {
+  implicit def optionWriter[A](implicit writer: JsonWriter[A]): JsonWriter[Option[A]] = new JsonWriter[Option[A]] {
+    override def write(value: Option[A]): Json = {
+      value match {
+        case Some(v) => writer.write(v)
+        case None => JsNull
+      }
+    }
   }
 }
