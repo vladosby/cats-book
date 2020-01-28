@@ -2,6 +2,7 @@ package com.book.cats
 import JsonWriterInstances._
 import JsonSyntax._
 import RecursiveResolution._
+import PrintableSyntax._
 
 final case class Person(name: String, email: String)
 
@@ -82,7 +83,18 @@ object Printable {
   }
 
   def print[A : Printable](v: A): Unit = {
-    println(implicitly[Printable[A]].format(v))
+    println(format(v))
+  }
+}
+
+object PrintableSyntax {
+  implicit class PrintableOps[A](value: A) {
+
+    def format(implicit p: Printable[A]): String = p.format(value)
+
+    def print(implicit p: Printable[A]): Unit = {
+      println(format)
+    }
   }
 }
 
@@ -97,5 +109,6 @@ object PrintableMain {
 
     val cat = Cat(name = "Cat name", age = 12, color = "blue")
     Printable.print(cat)
+    cat.print
   }
 }
