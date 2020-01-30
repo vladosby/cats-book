@@ -1,4 +1,5 @@
 package com.book.cats
+import MonoidInstances._
 
 trait Semigroup[A] {
   def combine(x: A, y: A): A
@@ -30,10 +31,20 @@ object MonoidInstances {
       def combine(a: Boolean, b: Boolean) = a && b
       def empty = true
     }
+
+  implicit def setUnionMonoid[A]: Monoid[Set[A]] =
+    new Monoid[Set[A]] {
+      def combine(a: Set[A], b: Set[A]) = a union b
+      def empty = Set.empty[A]
+    }
 }
 
 
 
 object MonoidMain extends App {
-
+  val intSetMonoid = Monoid[Set[Int]]
+  val strSetMonoid = Monoid[Set[String]]
+  println(intSetMonoid.combine(Set(1, 2), Set(2, 3)))
+  // res2: Set[Int] = Set(1, 2, 3)
+  println(strSetMonoid.combine(Set("A", "B"), Set("B", "C")))
 }
