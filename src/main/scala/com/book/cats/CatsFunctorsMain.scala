@@ -58,11 +58,13 @@ Functor[Future](futureFunctor)
 Functor[Future](futureFunctor(executionContext))*/
 
 object Exercise1 extends App {
+
   sealed trait Tree[+A]
 
   object Tree {
     def branch[A](left: Tree[A], right: Tree[A]): Tree[A] =
       Branch(left, right)
+
     def leaf[A](value: A): Tree[A] =
       Leaf(value)
   }
@@ -80,7 +82,57 @@ object Exercise1 extends App {
       }
   }
 
-//  println(Branch(Leaf(10), Leaf(20)).map(_ * 2)) does not work
+  //  println(Branch(Leaf(10), Leaf(20)).map(_ * 2)) does not work
   println(Tree.leaf(100).map(_ * 2))
   println(Tree.branch(Tree.leaf(10), Tree.leaf(20)).map(_ * 2))
+}
+
+// Contramap
+object Exercise2 extends App {
+
+  trait Printable[A] {
+    self =>
+
+    def format(value: A): String
+
+    def contramap[B](func: B => A): Printable[B] =
+      new Printable[B] {
+        def format(value: B): String =
+          self.format(func(value))
+      }
+
+    def contramap2[B](func: B => A): Printable[B] =
+      (value: B) => this.format(func(value))
+  }
+
+  def format[A](value: A)(implicit p: Printable[A]): String =
+    p.format(value)
+
+  implicit val stringPrintable: Printable[String] =
+    new Printable[String] {
+      def format(value: String): String =
+        "\"" + value + "\""
+    }
+
+  implicit val booleanPrintable: Printable[Boolean] =
+    new Printable[Boolean] {
+      def format(value: Boolean): String =
+        if (value) "yes" else "no"
+    }
+
+  println(format("hello"))
+
+  println(format(true))
+
+  final case class Box[A](value: A)
+
+  implicit val contramapResult: Printable[Int] = booleanPrintable.contramap((i: Int) => i > 1)
+  println(format(12))
+  println(format(0))
+
+  implicit def boxPrintable[A](implicit p: Printable[A]): Printable[Box[A]] = new Printable[Box[A]] {
+    override def format(value: Box[A]): String = p.format(value.value)
+  }
+    println(format(Box("hello world")))
+    println(format(Box(true)))
 }
