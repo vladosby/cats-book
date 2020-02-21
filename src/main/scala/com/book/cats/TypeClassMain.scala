@@ -74,7 +74,7 @@ trait Printable[A] {
 object PrintableInstances {
   implicit val stringPrintable: Printable[String] = (v: String) => s"printable string: $v"
   implicit val intPrintable: Printable[Int] = (v: Int) => s"printable int: $v"
-  implicit val catPrintable: Printable[Cat] = (v: Cat) => s"${v.name} is a ${v.age} year-old ${v.color} cat."
+  implicit val catPrintable: Printable[Cat2] = (v: Cat2) => s"${v.name} is a ${v.age} year-old ${v.color} cat."
 }
 
 object Printable {
@@ -98,7 +98,7 @@ object PrintableSyntax {
   }
 }
 
-final case class Cat(name: String, age: Int, color: String)
+final case class Cat2(name: String, age: Int, color: String)
 
 object PrintableMain {
   def main(args: Array[String]): Unit = {
@@ -107,7 +107,7 @@ object PrintableMain {
     Printable.print("Hello")
     Printable.print(123)
 
-    val cat = Cat(name = "Cat name", age = 12, color = "blue")
+    val cat = Cat2(name = "Cat name", age = 12, color = "blue")
     Printable.print(cat)
     cat.print
   }

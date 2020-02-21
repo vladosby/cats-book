@@ -2,7 +2,7 @@ package com.book.cats
 
 import cats._
 import cats.implicits._
-import MonoidInstances._
+import MonoidInstances2._
 
 case class Order(totalCost: Double, quantity: Double)
 
@@ -30,6 +30,6 @@ object Adder {
   }
 }
 
-object MonoidInstances {
+object MonoidInstances2 {
   implicit val orderMonoid: Monoid[Order] = Monoid.instance[Order](Order(0, 0), (o1, o2) => Order(o1.totalCost + o2.totalCost, o1.quantity + o2.quantity))
 }
